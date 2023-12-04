@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppBar, Box, Toolbar, Typography } from '@mui/material';
-import { Button, Upload, message } from 'antd';
+import { Button, Collapse, Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   RcFile,
@@ -127,6 +127,20 @@ function App() {
   );
 
   const onSubmit = async () => {
+    if (!text) return;
+    const trimmedString = text.trim();
+
+    // Use a regular expression to split the string into words
+    const words = trimmedString.split(/\s+/);
+
+    // Return the count of words
+    const wordCount = words.length;
+    if (wordCount < 5) {
+      return message.error(
+        'Please describe your symptoms in at least 5 words.'
+      );
+    }
+
     setDisease('');
     setIsPredicting(true);
 
@@ -149,7 +163,7 @@ function App() {
       setIsPredicting(false);
 
       return message.error(
-        'Please upload different image or describe more about your symptom'
+        'Please upload different image or describe more about your symptoms'
       );
     }
 
@@ -165,10 +179,18 @@ function App() {
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" className="mb-5">
+        <AppBar
+          position="static"
+          className="mb-5"
+          style={{ backgroundColor: '#545454' }}
+        >
           <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
               Skin Prediction
+            </Typography>
+            <Typography variant="body1" component="div">
+              Made with 💛 by Kelompok 1 (Transcendent) - Universitas
+              Internasional Batam
             </Typography>
           </Toolbar>
         </AppBar>
@@ -177,7 +199,7 @@ function App() {
           className="mb-3"
         >
           <div style={{ display: 'flex', width: '80%' }}>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 0 }}>
               <Upload
                 name="avatar"
                 listType="picture-card"
@@ -209,7 +231,7 @@ function App() {
                 className="mb-2"
                 onChange={e => setText(e.target.value)}
                 value={text}
-                style={{ flex: 1 }}
+                style={{ flex: 1, fontSize: '2rem' }}
               />
               <Button
                 // className="bg-primary text-white w-100"
@@ -227,35 +249,61 @@ function App() {
         {disease && (
           <div className="d-flex justify-content-center">
             <div style={{ width: '80%' }}>
-              <Title level={2}>Prediction result</Title>
-              You have {'aiueo'.includes(disease[0].toLowerCase())
-                ? 'an'
-                : 'a'}{' '}
-              <b>"{disease}"</b>
-              <Title level={4} className="mt-4">
-                What is {disease}?
-              </Title>
-              {DISEASE_DESCRIPTIONS[disease as string].description}
-              <Title level={4} className="mt-4">
-                What might the cause of {disease}?
-              </Title>
-              <ul>
-                {DISEASE_DESCRIPTIONS[disease as string].causes.map(
-                  (cause: any) => (
-                    <li>{cause}</li>
-                  )
-                )}
-              </ul>
-              <Title level={4} className="mt-4">
-                What is the treatment for {disease}?
-              </Title>
-              <ul>
-                {DISEASE_DESCRIPTIONS[disease as string].solutions.map(
-                  (solution: any) => (
-                    <li>{solution}</li>
-                  )
-                )}
-              </ul>
+              <Title level={3}>Prediction result:</Title>
+              <div style={{ fontSize: '2rem' }} className="mb-4">
+                You have <b>{disease}</b>
+              </div>
+              <Collapse
+                size="large"
+                items={[
+                  {
+                    key: '1',
+                    label: `What is ${disease}?`,
+                    children: (
+                      <div>
+                        {DISEASE_DESCRIPTIONS[disease as string].description}
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+              <Collapse
+                size="large"
+                items={[
+                  {
+                    key: '2',
+                    label: ` What might the cause of ${disease}?`,
+                    children: (
+                      <ul>
+                        {DISEASE_DESCRIPTIONS[disease as string].causes.map(
+                          (cause: any) => (
+                            <li>{cause}</li>
+                          )
+                        )}
+                      </ul>
+                    ),
+                  },
+                ]}
+              />
+              <Collapse
+                size="large"
+                className="mb-5"
+                items={[
+                  {
+                    key: '3',
+                    label: ` What is the treatment for ${disease}?`,
+                    children: (
+                      <ul>
+                        {DISEASE_DESCRIPTIONS[disease as string].solutions.map(
+                          (solution: any) => (
+                            <li>{solution}</li>
+                          )
+                        )}
+                      </ul>
+                    ),
+                  },
+                ]}
+              />
             </div>
           </div>
         )}
