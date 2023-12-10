@@ -1,10 +1,6 @@
-:where(
-    .css-dev-only-do-not-override-2q8sxy
-  ).ant-upload-wrapper.ant-upload-picture-card-wrapper
+.ant-upload-wrapper.ant-upload-picture-card-wrapper
   .ant-upload.ant-upload-select,
-:where(
-    .css-dev-only-do-not-override-2q8sxy
-  ).ant-upload-wrapper.ant-upload-picture-circle-wrapper
+.ant-upload-wrapper.ant-upload-picture-circle-wrapper
   .ant-upload.ant-upload-select {
   width: 20vw;
   height: 20vw;
