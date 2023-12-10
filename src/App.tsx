@@ -155,7 +155,7 @@ function App() {
     formData.append('text', text as string);
 
     const { data } = await axios.post(
-      'http://103.123.63.187:5000/predict',
+      'https://transcendent.my.id/predict',
       formData,
       {
         headers: {
