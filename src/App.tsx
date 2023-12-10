@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppBar, Box, Toolbar, Typography } from '@mui/material';
+import Swal from 'sweetalert2';
 import { Button, Collapse, Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import {
@@ -85,7 +86,10 @@ function App() {
   const [imageUrl, setImageUrl] = useState<string>();
   const [file, setFile] = useState<RcFile>();
   const [text, setText] = useState<string>();
-  const [disease, setDisease] = useState<string>('');
+  const [disease, setDisease] = useState<{
+    class: string;
+    confidence: number;
+  } | null>(null);
   const [isPredicting, setIsPredicting] = useState<boolean>(false);
 
   const handleChange: UploadProps['onChange'] = (
@@ -136,12 +140,14 @@ function App() {
     // Return the count of words
     const wordCount = words.length;
     if (wordCount < 5) {
-      return message.error(
-        'Please describe your symptoms in at least 5 words.'
-      );
+      return Swal.fire({
+        icon: 'error',
+        title: 'Input Error',
+        text: 'Please describe your symptoms in at least 5 words.',
+      });
     }
 
-    setDisease('');
+    setDisease(null);
     setIsPredicting(true);
 
     const formData = new FormData();
@@ -149,7 +155,7 @@ function App() {
     formData.append('text', text as string);
 
     const { data } = await axios.post(
-      'http://127.0.0.1:5000/predict',
+      'http://103.123.63.187:5000/predict',
       formData,
       {
         headers: {
@@ -162,9 +168,11 @@ function App() {
     if (isNotValidImage) {
       setIsPredicting(false);
 
-      return message.error(
-        'Please upload different image or describe more about your symptoms'
-      );
+      return Swal.fire({
+        icon: 'error',
+        title: 'Input Error',
+        text: 'Please upload different image or describe more about your symptoms',
+      });
     }
 
     const predictedDisease = (data as any[]).reduce((a: any, b: any) => {
@@ -172,7 +180,7 @@ function App() {
       return b;
     });
 
-    setDisease(predictedDisease.class);
+    setDisease(predictedDisease);
     setIsPredicting(false);
   };
 
@@ -250,18 +258,24 @@ function App() {
           <div className="d-flex justify-content-center">
             <div style={{ width: '80%' }}>
               <Title level={3}>Prediction result:</Title>
-              <div style={{ fontSize: '2rem' }} className="mb-4">
-                You have <b>{disease}</b>
+              <div style={{ fontSize: '2rem' }}>
+                You have <b>{disease.class}</b>
+              </div>
+              <div style={{ fontSize: '1.2rem' }} className="mb-4">
+                Certainty: {Math.round(disease.confidence * 100)}%
               </div>
               <Collapse
                 size="large"
                 items={[
                   {
                     key: '1',
-                    label: `What is ${disease}?`,
+                    label: `What is ${disease.class}?`,
                     children: (
                       <div>
-                        {DISEASE_DESCRIPTIONS[disease as string].description}
+                        {
+                          DISEASE_DESCRIPTIONS[disease.class as string]
+                            .description
+                        }
                       </div>
                     ),
                   },
@@ -272,14 +286,14 @@ function App() {
                 items={[
                   {
                     key: '2',
-                    label: ` What might the cause of ${disease}?`,
+                    label: ` What might the cause of ${disease.class}?`,
                     children: (
                       <ul>
-                        {DISEASE_DESCRIPTIONS[disease as string].causes.map(
-                          (cause: any) => (
-                            <li>{cause}</li>
-                          )
-                        )}
+                        {DISEASE_DESCRIPTIONS[
+                          disease.class as string
+                        ].causes.map((cause: any) => (
+                          <li>{cause}</li>
+                        ))}
                       </ul>
                     ),
                   },
@@ -291,14 +305,14 @@ function App() {
                 items={[
                   {
                     key: '3',
-                    label: ` What is the treatment for ${disease}?`,
+                    label: ` What is the treatment for ${disease.class}?`,
                     children: (
                       <ul>
-                        {DISEASE_DESCRIPTIONS[disease as string].solutions.map(
-                          (solution: any) => (
-                            <li>{solution}</li>
-                          )
-                        )}
+                        {DISEASE_DESCRIPTIONS[
+                          disease.class as string
+                        ].solutions.map((solution: any) => (
+                          <li>{solution}</li>
+                        ))}
                       </ul>
                     ),
                   },
