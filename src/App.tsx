@@ -286,7 +286,7 @@ function App() {
                 items={[
                   {
                     key: '2',
-                    label: ` What might the cause of ${disease.class}?`,
+                    label: ` What might cause ${disease.class}?`,
                     children: (
                       <ul>
                         {DISEASE_DESCRIPTIONS[
@@ -305,7 +305,7 @@ function App() {
                 items={[
                   {
                     key: '3',
-                    label: ` What is the treatment for ${disease.class}?`,
+                    label: ` What are the treatments for ${disease.class}?`,
                     children: (
                       <ul>
                         {DISEASE_DESCRIPTIONS[
