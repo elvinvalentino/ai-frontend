@@ -14,6 +14,7 @@ import { getBase64 } from './utils/getBase64';
 import TextArea from 'antd/es/input/TextArea';
 import axios from 'axios';
 import Title from 'antd/es/typography/Title';
+import { useMediaQuery } from 'react-responsive';
 
 const DISEASE_DESCRIPTIONS: Record<string, any> = {
   'Acne or Rosacea': {
@@ -91,6 +92,10 @@ function App() {
     confidence: number;
   } | null>(null);
   const [isPredicting, setIsPredicting] = useState<boolean>(false);
+
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' });
+  const isHideSmallTitle = useMediaQuery({ query: '(max-width: 1300px)' });
+  const isHideCredit = useMediaQuery({ query: '(max-width: 820px)' });
 
   const handleChange: UploadProps['onChange'] = (
     info: UploadChangeParam<UploadFile>
@@ -199,22 +204,41 @@ function App() {
               sx={{ display: 'flex', alignItems: 'flex-end', flexGrow: 1 }}
             >
               Skin Disease Diagnosis
-              <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
-                (Acne or Rosacea, Malignant Lesions, Psoriasis or Lichen Planus)
+              {!isHideSmallTitle && (
+                <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+                  (Acne or Rosacea, Malignant Lesions, Psoriasis or Lichen
+                  Planus)
+                </Typography>
+              )}
+            </Typography>
+            {!isHideCredit && (
+              <Typography variant="body2" component="div">
+                Made with 💛 by Kelompok 1 (Transcendent) - Universitas
+                Internasional Batam
               </Typography>
-            </Typography>
-            <Typography variant="body2" component="div">
-              Made with 💛 by Kelompok 1 (Transcendent) - Universitas
-              Internasional Batam
-            </Typography>
+            )}
           </Toolbar>
         </AppBar>
         <div
           style={{ display: 'flex', justifyContent: 'center' }}
           className="mb-3"
         >
-          <div style={{ display: 'flex', width: '80%' }}>
-            <div style={{ flex: 0 }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: isTabletOrMobile ? 'column' : 'row',
+              width: '80%',
+            }}
+          >
+            <div
+              style={{
+                flex: 0,
+                ...(isTabletOrMobile && {
+                  marginBottom: '1rem',
+                  alignSelf: 'center',
+                }),
+              }}
+            >
               <Upload
                 name="avatar"
                 listType="picture-card"
