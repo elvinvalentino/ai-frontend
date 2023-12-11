@@ -193,10 +193,17 @@ function App() {
           style={{ backgroundColor: '#545454' }}
         >
           <Toolbar>
-            <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
-              Skin Prediction
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{ display: 'flex', alignItems: 'flex-end', flexGrow: 1 }}
+            >
+              Skin Disease Diagnosis
+              <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+                (Acne or Rosacea, Malignant Lesions, Psoriasis or Lichen Planus)
+              </Typography>
             </Typography>
-            <Typography variant="body1" component="div">
+            <Typography variant="body2" component="div">
               Made with 💛 by Kelompok 1 (Transcendent) - Universitas
               Internasional Batam
             </Typography>
